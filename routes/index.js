@@ -11,7 +11,7 @@ var conn = mysql.createConnection({
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  conn.query('select * from Test', function (err, rows, fields) {
+  conn.query('select * from users', function (err, rows, fields) {
   if (err) throw err; 
   console.log(rows);
   res.render('index', { title: 'select * from  -> rows.length : ' + rows.length });
