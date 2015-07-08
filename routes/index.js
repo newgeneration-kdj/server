@@ -7,15 +7,27 @@ var conn = mysql.createConnection({
     user : 'beb66692cdc551',
     password : '215db494',
     database:'newgeneration'
+    /*host :'localhost',
+    port : 3306,
+    user : 'ladmusician',
+    password : '',
+    database:'test'*/
 });
+
+conn.connect();
+ conn.query('SELECT * FROM USER', function(err, rows, fields) {
+    if (err) throw err;
+    console.log('The solution is: ', rows);
+  });
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  conn.query('select * from users', function (err, rows, fields) {
-  if (err) throw err; 
-  console.log(rows);
-  res.render('index', { title: 'select * from  -> rows.length : ' + rows.length });
- });
+  
+  conn.query('SELECT * FROM USER', function(err, rows, fields) {
+    if (err) throw err;
+    console.log('The solution is: ', rows);
+    res.render('index', { title: 'Express', content: rows });
+  });
   //res.render('index', { title: 'Express' });
 });
 
