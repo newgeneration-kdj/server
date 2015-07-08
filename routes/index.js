@@ -20,6 +20,7 @@ connection.connect(function(err) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+  console.log('a');
   var query = connection.query('select * from users',function(err,rows){
         console.log(rows);
         res.json(rows);
