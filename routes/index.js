@@ -1,34 +1,71 @@
 var express = require('express');
 var router = express.Router();
-var mysql = require('mysql');
-var conn = mysql.createConnection({
-    host :'ap-cdbr-azure-east-c.cloudapp.net',
-    port : 3306,
-    user : 'beb66692cdc551',
-    password : '215db494',
-    database:'newgeneration'
-    /*host :'localhost',
-    port : 3306,
-    user : 'ladmusician',
-    password : '',
-    database:'test'*/
+var db = require('../db');
+
+
+router.get('/',function(req,res){
+    res.send("aaa");
+})
+
+
+router.get('/login', function (req, res) {
+    //login
 });
 
-conn.connect();
- conn.query('SELECT * FROM USER', function(err, rows, fields) {
-    if (err) throw err;
-    console.log('The solution is: ', rows);
-  });
+router.post('/logout', function (req, res) {
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  
-  conn.query('SELECT * FROM USER', function(err, rows, fields) {
-    if (err) throw err;
-    console.log('The solution is: ', rows);
-    res.render('index', { title: 'Express', content: rows });
-  });
-  //res.render('index', { title: 'Express' });
+});
+
+
+router.get('/duplicate/usernames/:username', function (req, res) {
+
+    var func = db.isDuplicateUsername(req.params.username);
+    var vo = {};
+
+    func.on('success', function (results) {
+        //console.log('results : ' + results);
+
+
+        if (results == '') {
+            vo.exist = 0;
+            res.status(200).send(vo);
+        } else {
+            vo.exist = 1;
+            res.status(200).send(vo);
+        }
+    });
+    func.on('error', function (error) {
+        vo.error = error
+        res.send(500, vo);
+        console.log('error : ' + error);
+    });
+
+});
+router.get('/duplicate/emails/:email', function (req, res) {
+
+    var func = db.isDuplicateEmail(req.params.email);
+    var vo = {};
+
+    func.on('success', function (results) {
+        //console.log('results : ' + results);
+
+
+        if (results == '') {
+            vo.exist = 0;
+            res.status(200).send(vo);
+        } else {
+            vo.exist = 1;
+            res.status(200).send(vo);
+        }
+    });
+    func.on('error', function (error) {
+        vo.error = error
+        res.send(500, vo);
+        console.log('error : ' + error);
+    });
+
 });
 
 module.exports = router;
+
+//아이디중복

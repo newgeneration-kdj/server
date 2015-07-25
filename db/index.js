@@ -5,41 +5,42 @@
 var mysql = require('mysql');
 
 var conn = mysql.createConnection({
-    host :'ja-cdbr-azure-west-a.cloudapp.net',
-    port : 3306,
-    user : 'bcf50bd9f0e6cc',
-    password : 'c71cc2cf',
-    database:'dandisnap'
+    host: 'ja-cdbr-azure-west-a.cloudapp.net',
+    port: 3306,
+    user: 'bcf50bd9f0e6cc',
+    password: 'c71cc2cf',
+    database: 'dandisnap'
 
 });
 
 var EventEmitter = require('events').EventEmitter;
 
-module.exports =  {
+module.exports = {
 
-    isDuplicateEmail :  function(email){
+    isDuplicateEmail: function (email) {
         var evt = new EventEmitter();
-        conn.query('select * from user where email = ?' ,[email],function(error,results){
+        conn.query('select * from user where email = ?', [email], function (error, results) {
 
-                if(error){
-                    evt.emit('error',error);
-                }else{
-                    evt.emit('success',results);
-                }
+            if (error) {
+                evt.emit('error', error);
+            } else {
+                evt.emit('success', results);
+            }
+
 
         });
 
         return evt;
 
     },
-    isDuplicateUsername: function(username){
+    isDuplicateUsername: function (username) {
         var evt = new EventEmitter();
-        conn.query('select * from user where username = ?' ,[username],function(error,results){
+        conn.query('select * from user where username = ?', [username], function (error, results) {
 
-            if(error){
-                evt.emit('error',error);
-            }else{
-                evt.emit('success',results);
+            if (error) {
+                evt.emit('error', error);
+            } else {
+                evt.emit('success', results);
             }
         });
 
@@ -47,22 +48,20 @@ module.exports =  {
 
     },
 
-    addUser  : function(email,username,name,password){
+    addUser: function (email, username, name, password) {
         var evt = new EventEmitter();
-        conn.query('insert into user(email,username,name,password) values(?,?,?,?)',[email,username,name,password],function(error,result){
-           if(error){
-               evt.emit('error',error);
+        conn.query('insert into user(email,username,name,password) values(?,?,?,?)', [email, username, name, password], function (error, results) {
+            if (error) {
+                evt.emit('error', error);
 
-           }else{
-               evt.emit('success',result);
-           }
+            } else {
+                evt.emit('success', results);
+            }
 
         });
         return evt;
 
     }
-
-
 
 
 };
