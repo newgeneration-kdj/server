@@ -10,6 +10,9 @@ router.get('/',function(req,res){
 
 router.get('/login', function (req, res) {
     //login
+    var func = db.isDuplicateUsername(req.params.username);
+    var vo = {};
+
 });
 
 router.post('/logout', function (req, res) {
