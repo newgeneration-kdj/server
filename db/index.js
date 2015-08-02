@@ -4,17 +4,7 @@
 
 var mysql = require('mysql');
 var util = require('../util');
-
-/*
-var conn = mysql.createConnection({
-    host: 'ja-cdbr-azure-west-a.cloudapp.net',
-    port: 3306,
-    user: 'bcf50bd9f0e6cc',
-    password: 'c71cc2cf',
-    database: 'dandisnap'
-
-});
-*/
+var EventEmitter = require('events').EventEmitter;
 var pool = mysql.createPool({
 
     host: 'ja-cdbr-azure-west-a.cloudapp.net',
@@ -24,11 +14,8 @@ var pool = mysql.createPool({
     database: 'dandisnap',
     connectionLimit:20,
     waitForConnections:false
-})
 
-
-
-var EventEmitter = require('events').EventEmitter;
+});
 
 module.exports = {
 
@@ -48,6 +35,7 @@ module.exports = {
         return evt;
 
     },
+
     isDuplicateUsername: function (username) {
         var evt = new EventEmitter();
         pool.getConnection(function(err,conn){
@@ -85,7 +73,89 @@ module.exports = {
         });
         return evt;
 
-    }
+    },
+
+    userLogin : function ( username , password ) {
+        var evt = new EventEmitter ();
+
+        pool.getConnection( function ( err, conn ) {
+            conn.query ( 'select user from user where username = ? and password = ?'
+                , [username , password] ,function ( error , results ) {
+                if ( error ) {
+                    evt.emit('error', error);
+                } else {
+                    evt.emit('success', results);
+                }
+
+                conn.release();
+            });
+        });
+    },
+
+    addLike : function ( userid , contentid ) {
+        var evt = new EventEmitter();
+        var current = util.getDatetime(Date.now());
+        pool.getConnection( function ( err , conn ) {
+            conn.query ( 'insert into like(for_userid,for_contentid,created,isdeprecated)'
+                + ' values(?,?,?,?)' , [userid , contentid , current , 0] , function ( error , results )  {
+                if ( error ) {
+                    evt.emit('error' , error );
+                } else {
+                    evt.emit('success' , results );
+                }
+
+                conn.release();
+            });
+
+        });
+    },
+
+    addUserToUser : function ( fromUser , toUser ) {
+        var evt = new EventEmitter();
+        var current = util.getDatetime(Date.now());
+
+        pool.getConnection( function ( err, conn ) {
+            conn.query ( 'insert into usertouser(from_userid,to_userid,created)'
+                + ' values(?,?,?)', [fromUser,toUser,current] , function(error,results ) {
+                    if ( error ) {
+                        evt.emit('error' , error );
+                    } else {
+                        evt.emit('results' , results );
+                    }
+                    conn.release();
+            });
+        });
+    },
+
+    getUserId : function ( username ) {
+        var evt = new EventEmitter ();
+
+        pool.getConnection( function ( err , conn ) {
+            conn.query ('select c_userid form user where username = ?' , [username] , function(error , results ) {
+                if ( error ) {
+                    evt.emit( 'error' , error );
+                } else {
+                    evt.emit( 'success' , results );
+                }
+                conn.release();
+            });
+        });
+    },
+
+    getContentIds : function ( username ) {
+        var evt = new EventEmitter();
+
+        pool.getConnection( function ( err , conn ) {
+            conn.query ( 'select * from content where for_userid = ?', [username] , function(error, results ) {
+                if ( error ) {
+                    evt.emit ( 'error' , error );
+                } else {
+                    evt.emit ( 'results' , results );
+                }
+                conn.release();
+            });
+        });
+    },
 
 
 };

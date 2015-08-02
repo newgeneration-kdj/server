@@ -8,12 +8,27 @@ router.get('/',function(req,res){
 })
 
 
-router.get('/login', function (req, res) {
+router.post('/login', function (req, res) {
     //login
-    var func = db.isDuplicateUsername(req.params.username);
+    var func = db.userLogin(req.params.username , req.params.password );
     var vo = {};
 
+    func.on( 'success' , function(result) {
+        if ( result == '' ) {
+            vo.exist = 0;
+            res.status(200).send(vo);
+        } else {
+            vo.exist = 1;
+            res.status(200).send(vo);
+        }
+    });
+    func.on ('error' , function(error) {
+        vo.error = error;
+        res.send(500,vo);
+        console.log('error : ' + error );
+    });
 });
+
 
 router.post('/logout', function (req, res) {
 
@@ -27,7 +42,6 @@ router.get('/duplicate/usernames/:username', function (req, res) {
 
     func.on('success', function (results) {
         //console.log('results : ' + results);
-
 
         if (results == '') {
             vo.exist = 0;
