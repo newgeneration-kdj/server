@@ -17,7 +17,34 @@ var pool = mysql.createPool({
 
 });
 
+exports.query_set = {
+    is_duplicate_email : 'select * from user where email = ?',
+    is_duplicate_username : 'select * from user where username = ?',
+    add_user : 'insert into user(email,username,name,password,pic_url,intro,isdeprecated,created,updated)' +
+    ' values(?,?,?,?,?,?,?,?,?)',
+    user_login : 'select user from user where username = ? and password = ?',
+    add_like : 'insert into like(for_userid,for_contentid,created,isdeprecated)'
+    + ' values(?,?,?,?)',
+};
+
+exports.excuteQuery = function ( query, params ) {
+    var evt = new EventEmitter();
+
+    pool.getConnection(function(err,conn) {
+        conn.query(query , params , function ( error , results ){
+            if ( error ) {
+                evt.emit('error' , error );
+            } else {
+                evt.emit('success' , results);
+            }
+        });
+    });
+};
+
+
 module.exports = {
+
+
 
     isDuplicateEmail: function (email) {
         var evt = new EventEmitter();
@@ -59,7 +86,8 @@ module.exports = {
         var current = util.getDatetime(Date.now());
         pool.getConnection(function(err,conn) {
             conn.query('insert into user(email,username,name,password,pic_url,intro,isdeprecated,created,updated)' +
-                ' values(?,?,?,?,?,?,?,?,?)', [email, username, name, password, '', '', 0, current, current], function (error, results) {
+                ' values(?,?,?,?,?,?,?,?,?)',
+                [email, username, name, password, '', '', 0, current, current], function (error, results) {
                 if (error) {
                     evt.emit('error', error);
 
@@ -157,5 +185,19 @@ module.exports = {
         });
     },
 
+    getContent : function ( contentid ) {
+        var evt = new EventEmitter();
+
+        pool.getConnection( function ( err , conn ) {
+            conn.query ( 'select from content where ', contentid , function( error, results ) {
+                if ( error ) {
+                    evt.emit ( 'error' , error );
+                 } else {
+                    evt.emit ( 'results'. results );
+                }
+                conn.release();
+            });
+        });
+    }
 
 };

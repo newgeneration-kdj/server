@@ -8,9 +8,9 @@ router.get('/',function(req,res){
 })
 
 
-router.post('/login', function (req, res) {
+router.get('/login/:username/:password', function (req, res) {
     //login
-    var func = db.userLogin(req.params.username , req.params.password );
+    var func = db.excuteQuery(db.query_set.user_login , [req.params.username , req.params.password]);
     var vo = {};
 
     func.on( 'success' , function(result) {
