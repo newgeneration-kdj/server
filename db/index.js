@@ -42,6 +42,7 @@ exports.excuteQuery = function ( query, params ) {
 };
 
 
+/*
 module.exports = {
 
 
@@ -200,4 +201,4 @@ module.exports = {
         });
     }
 
-};
+};*/
