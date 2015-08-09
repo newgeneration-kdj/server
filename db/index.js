@@ -17,6 +17,34 @@ var pool = mysql.createPool({
 
 });
 
+exports.querySet = {
+    is_duplicate_email : 'select * from user where email = ?',
+    is_duplicate_username : 'select * from user where username = ?',
+    add_user : 'insert into user(email,username,name,password)' +
+    ' values(?,?,?,?)',
+    add_user_created : 'insert into user(email,username,name,password,crated)' +
+    'values(?,?,?,?,?)',
+    user_login : 'select * from user where username = ? and password = ?'
+};
+
+exports.excuteQuery = function ( query , params ) {
+    var evt = new EventEmitter ();
+
+    pool.getConnection(function ( err, conn ){
+            conn.query( query, params , function ( error , results ) {
+                if ( error ) {
+                    evt.emit('error' , error );
+                } else {
+                    evt.emit('success' , results );
+                }
+                conn.release();
+            });
+    });
+
+    return evt;
+};
+
+/*
 module.exports = {
 
     isDuplicateEmail: function (email) {
@@ -158,4 +186,4 @@ module.exports = {
     },
 
 
-};
+};*/
