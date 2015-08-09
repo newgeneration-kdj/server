@@ -92,10 +92,11 @@ router.post('/users/' , function(req, res){
     func.on('success' , function(results) {
 
         if ( results = '' ){
-            vo.exist = 0;
+            vo.success = 0;
             res.status(200).send(vo);
         } else {
-            vo.exist = 1;
+            vo.success = 1;
+            vo.email = req.body.email;
             res.status(200).send(vo);
         }
     });
