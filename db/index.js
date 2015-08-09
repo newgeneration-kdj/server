@@ -17,6 +17,7 @@ var pool = mysql.createPool({
 
 });
 
+<<<<<<< HEAD
 exports.query_set = {
     is_duplicate_email : 'select * from user where email = ?',
     is_duplicate_username : 'select * from user where username = ?',
@@ -42,6 +43,36 @@ exports.excuteQuery = function ( query, params ) {
 };
 
 
+=======
+exports.querySet = {
+    is_duplicate_email : 'select * from user where email = ?',
+    is_duplicate_username : 'select * from user where username = ?',
+    add_user : 'insert into user(email,username,name,password)' +
+    ' values(?,?,?,?)',
+    add_user_created : 'insert into user(email,username,name,password,crated)' +
+    'values(?,?,?,?,?)',
+    user_login : 'select * from user where username = ? and password = ?'
+};
+
+exports.excuteQuery = function ( query , params ) {
+    var evt = new EventEmitter ();
+
+    pool.getConnection(function ( err, conn ){
+            conn.query( query, params , function ( error , results ) {
+                if ( error ) {
+                    evt.emit('error' , error );
+                } else {
+                    evt.emit('success' , results );
+                }
+                conn.release();
+            });
+    });
+
+    return evt;
+};
+
+/*
+>>>>>>> 549ba23667eb5c8715ae2e340aa4dfaee13cc55f
 module.exports = {
 
 
@@ -200,4 +231,4 @@ module.exports = {
         });
     }
 
-};
+};};};*/
