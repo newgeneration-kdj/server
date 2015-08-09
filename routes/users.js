@@ -6,29 +6,27 @@ var db = require('../db');
 
 
 
-router.get('/:email/:username/:name/:password', function (req, res, next) {
+router.post('/' , function(req, res){
 
-    console.log(req.params);
-    var email = req.params.email;
-    var username = req.params.username;
-    var name = req.params.name;
-    var password = req.params.password;
+    var current = util.getDatetime(Date.now());
+    var func = db.excuteQuery(db.querySet.is_duplicate_email , [req.body.email , req.body.username , req.body.name ,  req.body.password , current ] );
     var vo = {};
 
-    var func = db.addUser(email,username,name,password);
+    func.on('success' , function(results) {
 
-    func.on('success',function(results){
-        console.log(results);
-        res.send(200,results);
+        if ( results = '' ){
+            vo.success = 0;
+            res.status(200).send(vo);
+        } else {
+            vo.success = 1;
+            vo.email = req.body.email;
+            res.status(200).send(vo);
+        }
     });
-    func.on('error',function(error){
+    func.on('error' , function(error) {
         vo.error = error;
         res.send(500,vo);
-        console.log('error : '+error);
 
     });
-
-
 });
-
 module.exports = router;

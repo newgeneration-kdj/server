@@ -12,34 +12,10 @@ var pool = mysql.createPool({
     user: 'bcf50bd9f0e6cc',
     password: 'c71cc2cf',
     database: 'dandisnap',
-    connectionLimit:20,
-    waitForConnections:false
+    connectionLimit:2,
+    waitForConnections:true
 
 });
-
-exports.query_set = {
-    is_duplicate_email : 'select * from user where email = ?',
-    is_duplicate_username : 'select * from user where username = ?',
-    add_user : 'insert into user(email,username,name,password,pic_url,intro,isdeprecated,created,updated)' +
-    ' values(?,?,?,?,?,?,?,?,?)',
-    user_login : 'select user from user where username = ? and password = ?',
-    add_like : 'insert into like(for_userid,for_contentid,created,isdeprecated)'
-    + ' values(?,?,?,?)',
-};
-
-exports.excuteQuery = function ( query, params ) {
-    var evt = new EventEmitter();
-
-    pool.getConnection(function(err,conn) {
-        conn.query(query , params , function ( error , results ){
-            if ( error ) {
-                evt.emit('error' , error );
-            } else {
-                evt.emit('success' , results);
-            }
-        });
-    });
-};
 
 
 exports.querySet = {
@@ -47,7 +23,7 @@ exports.querySet = {
     is_duplicate_username : 'select * from user where username = ?',
     add_user : 'insert into user(email,username,name,password)' +
     ' values(?,?,?,?)',
-    add_user_created : 'insert into user(email,username,name,password,crated)' +
+    add_user_created : 'insert into user(email,username,name,password,created)' +
     'values(?,?,?,?,?)',
     user_login : 'select * from user where username = ? and password = ?'
 };
