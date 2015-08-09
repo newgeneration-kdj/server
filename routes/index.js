@@ -6,7 +6,6 @@ var util = require('../util');
 
 router.get('/',function(req,res){
     res.send("aaa");
-})
 });
 
 
@@ -24,10 +23,10 @@ router.post('/login/', function (req, res) {
 
     func.on( 'success' , function(result) {
         if ( result == '' ) {
-            vo.exist = 0;
+            vo.success = 0;
             res.status(200).send(vo);
         } else {
-            vo.exist = 1;
+            vo.success = 1;
             res.status(200).send(vo);
         }
     });
