@@ -12,8 +12,8 @@ var pool = mysql.createPool({
     user: 'bcf50bd9f0e6cc',
     password: 'c71cc2cf',
     database: 'dandisnap',
-    connectionLimit:20,
-    waitForConnections:false
+    connectionLimit:2,
+    waitForConnections:true
 
 });
 
